@@ -1,0 +1,294 @@
+/**
+ * CNBlogs Sync 管理端样式表
+ * 
+ * 为管理页面和编辑器界面提供样式
+ */
+
+/* 管理页面容器 */
+.wrap.cnblogs-sync-wrap {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+/* 网格化表单布局 - 两列布局 (标题 - 设置项) */
+.form-table.cnblogs-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    width: 100%;
+    border: none;
+}
+
+.form-table.cnblogs-grid tbody {
+    display: contents;
+}
+
+.form-table.cnblogs-grid tr {
+    display: contents;
+}
+
+.form-table.cnblogs-grid th {
+    grid-column: 1;
+    width: auto;
+    padding: 0 0 10px 0;
+    border: none;
+    font-weight: 600;
+    font-size: 14px;
+    color: #333;
+}
+
+.form-table.cnblogs-grid td {
+    grid-column: span 1;
+    padding: 0;
+    border: none;
+}
+
+/* 同步状态显示 */
+.cnblogs-sync-meta {
+    padding: 12px;
+    background: #f5f5f5;
+    border-radius: 4px;
+    margin-bottom: 15px;
+}
+
+.sync-status {
+    margin: 0 0 10px 0;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.sync-status.success {
+    color: #28a745;
+}
+
+.sync-status.error {
+    color: #dc3545;
+}
+
+.sync-status.pending {
+    color: #ffc107;
+}
+
+.sync-status .dashicon {
+    width: 20px;
+    height: 20px;
+    font-size: 20px;
+}
+
+/* 文章 ID 显示 */
+.post-id {
+    margin: 8px 0;
+    padding: 8px;
+    background: white;
+    border-left: 3px solid #0073aa;
+    border-radius: 3px;
+}
+
+.post-id code {
+    background: #f5f5f5;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: 'Monaco', 'Courier New', monospace;
+    font-size: 12px;
+}
+
+/* 错误信息 */
+.error-message {
+    color: #dc3545;
+    padding: 8px;
+    background: #f8d7da;
+    border: 1px solid #f5c6cb;
+    border-radius: 3px;
+    margin: 8px 0;
+}
+
+/* 同步按钮 */
+.cnblogs-sync-btn {
+    margin-top: 10px;
+    width: 100%;
+}
+
+.cnblogs-sync-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* 连接测试结果 */
+#connection_test_result {
+    font-weight: 500;
+    display: inline-block;
+    margin-left: 10px;
+}
+
+#connection_test_result.success {
+    color: #28a745;
+}
+
+#connection_test_result.error {
+    color: #dc3545;
+}
+
+/* 测试按钮样式 */
+#cnblogs_test_connection {
+    margin-top: 5px;
+}
+
+/* 状态表格 */
+.wp-list-table .status-success {
+    color: #28a745;
+    font-weight: 500;
+}
+
+.wp-list-table .status-error {
+    color: #dc3545;
+    font-weight: 500;
+}
+
+.wp-list-table .status-pending {
+    color: #ffc107;
+    font-weight: 500;
+}
+
+/* 日志表格 */
+.wp-list-table .log-success {
+    background-color: #d4edda;
+    color: #155724;
+    padding: 4px 8px;
+    border-radius: 3px;
+}
+
+.wp-list-table .log-error {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 4px 8px;
+    border-radius: 3px;
+}
+
+.wp-list-table .log-update {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    padding: 4px 8px;
+    border-radius: 3px;
+}
+
+.wp-list-table .log-delete {
+    background-color: #fff3cd;
+    color: #856404;
+    padding: 4px 8px;
+    border-radius: 3px;
+}
+
+/* 分页 */
+.pagination {
+    display: flex;
+    gap: 5px;
+    margin-top: 15px;
+}
+
+.pagination a {
+    padding: 5px 10px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    text-decoration: none;
+    color: #0073aa;
+}
+
+.pagination a:hover {
+    background-color: #f5f5f5;
+}
+
+.pagination a.current {
+    background-color: #0073aa;
+    color: white;
+    border-color: #0073aa;
+}
+
+/* 表单样式 */
+.form-table th {
+    width: auto;
+}
+
+.form-table input[type="text"],
+.form-table input[type="url"],
+.form-table input[type="password"],
+.form-table input[type="email"],
+.form-table textarea,
+.form-table select {
+    width: 100%;
+    max-width: 400px;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.form-table input[type="checkbox"] {
+    margin-right: 8px;
+}
+
+.form-table .description {
+    color: #666;
+    font-size: 13px;
+    margin-top: 5px;
+    display: block;
+}
+
+/* 加载动画 */
+.spinner {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    vertical-align: middle;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.spinner.active {
+    animation: spin 1s linear infinite;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #0073aa;
+    border-radius: 50%;
+}
+
+/* 响应式设计 */
+@media (max-width: 1024px) {
+    .form-table.cnblogs-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .form-table.cnblogs-grid th {
+        grid-column: 1;
+    }
+
+    .form-table.cnblogs-grid td {
+        grid-column: 1;
+    }
+
+    .form-table.cnblogs-grid .section-title {
+        grid-column: 1;
+    }
+}
+
+@media (max-width: 768px) {
+    .form-table.cnblogs-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .form-table input[type="text"],
+    .form-table input[type="url"],
+    .form-table input[type="password"],
+    .form-table input[type="email"],
+    .form-table textarea,
+    .form-table select {
+        width: 100%;
+        max-width: none;
+    }
+}

@@ -1,0 +1,38 @@
+{
+  "name": "cnblogs-sync",
+  "version": "1.1.0",
+  "description": "WordPress plugin to sync posts to CNBlogs using MetaWeblog protocol",
+  "main": "cnblogs-sync.php",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "phpcs --standard=WordPress .",
+    "format": "phpcbf --standard=WordPress ."
+  },
+  "keywords": [
+    "wordpress",
+    "plugin",
+    "cnblogs",
+    "metaweblog",
+    "sync",
+    "publish",
+    "xml-rpc"
+  ],
+  "author": "MIKU-N",
+  "license": "GPL-2.0-or-later",
+  "homepage": "https://github.com/MIKU-N/cnblogs-sync",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MIKU-N/cnblogs-sync.git"
+  },
+  "bugs": {
+    "url": "https://github.com/MIKU-N/cnblogs-sync/issues"
+  },
+  "requires": {
+    "wordpress": ">=5.0",
+    "php": ">=7.4"
+  },
+  "devDependencies": {
+    "phpcs": "^3.7.1",
+    "phpunit": "^9.5"
+  }
+}
