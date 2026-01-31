@@ -1,0 +1,49 @@
+name: Package Plugin
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build:
+    name: Build and Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Prepare Plugin Files
+        run: |
+          mkdir -p build/cnblogs-sync
+          
+          # 复制主要插件文件和目录
+          cp cnblogs-sync.php build/cnblogs-sync/
+          cp LICENSE build/cnblogs-sync/
+          cp README.md build/cnblogs-sync/
+          
+          # 递归复制目录
+          cp -r admin build/cnblogs-sync/
+          cp -r assets build/cnblogs-sync/
+          cp -r includes build/cnblogs-sync/
+          
+          # 验证文件结构
+          ls -R build/cnblogs-sync
+
+      - name: Create Zip Archive
+        run: |
+          cd build
+          zip -r ../cnblogs-sync.zip cnblogs-sync
+          cd ..
+
+      - name: Upload Release Asset
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: cnblogs-sync.zip
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
