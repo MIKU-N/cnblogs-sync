@@ -205,9 +205,15 @@ MIT License - 详见 [LICENSE](LICENSE)
 
 感谢 CNBlogs 提供的 MetaWeblog API！
 
+## 🤖 AI 辅助开发声明
+
+本项目部分代码由人工智能（AI）辅助生成。虽然所有代码均经过人工审核与测试，但在特定环境或边缘情况下仍可能存在未预见的问题。
+
+在使用本插件前，请务必建立数据备份。开发者不对因使用本插件导致的任何数据丢失或系统故障承担法律责任。
+
 ---
 
-**准备好了吗？** 👉 [快速开始](README-QUICK.md)
+**准备好了吗？** 👉 [快速开始](docs/README-QUICK.md)
 
-**需要帮助？** 👉 [文档导航](DOCUMENTATION-INDEX.md)
+**需要帮助？** 👉 [文档导航](docs/README.md)
 

@@ -76,8 +76,8 @@
 ### 场景 2：我遇到连接问题
 
 **推荐流程**：
-1. 查看 [QUICK-DIAGNOSIS.md](QUICK-DIAGNOSIS.md) 的自检清单
-2. 对于其他问题，查阅 [USER-GUIDE.md](USER-GUIDE.md) 的故障排查章节
+1. 查阅 [USER-GUIDE.md](USER-GUIDE.md#故障排查) 的故障排查章节
+2. 确保 API 令牌正确且未过期
 
 **预计时间**：10-20 分钟
 
@@ -87,6 +87,7 @@
 
 **推荐流程**：
 1. 查看 [CHANGELOG.md](CHANGELOG.md) 了解新功能
+2. 参考 [USER-GUIDE.md](USER-GUIDE.md#升级说明) 进行升级
 
 **预计时间**：15-30 分钟
 
