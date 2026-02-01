@@ -17,45 +17,13 @@ if (!defined('ABSPATH')) {
  * @return void
  */
 function cnblogs_sync_register_admin_menu() {
-    // 主菜单
-    add_menu_page(
-        __('CNBlogs 同步', 'cnblogs-sync'),                    // 页面标题
-        __('CNBlogs 同步', 'cnblogs-sync'),                    // 菜单标题
-        'manage_options',                                      // 权限
-        'cnblogs-sync-settings',                              // 菜单 slug
-        'cnblogs_sync_render_settings_page',                  // 回调函数
-        'dashicons-sync',                                     // 菜单图标
-        30                                                     // 菜单位置
-    );
-
-    // 设置子菜单
-    add_submenu_page(
-        'cnblogs-sync-settings',
-        __('设置', 'cnblogs-sync'),
-        __('设置', 'cnblogs-sync'),
+    // 将菜单添加到设置菜单下
+    add_options_page(
+        __('CNBlogs 同步', 'cnblogs-sync'),
+        __('CNBlogs 同步', 'cnblogs-sync'),
         'manage_options',
         'cnblogs-sync-settings',
-        'cnblogs_sync_render_settings_page'
-    );
-
-    // 同步状态子菜单
-    add_submenu_page(
-        'cnblogs-sync-settings',
-        __('同步状态', 'cnblogs-sync'),
-        __('同步状态', 'cnblogs-sync'),
-        'manage_options',
-        'cnblogs-sync-status',
-        'cnblogs_sync_render_status_page'
-    );
-
-    // 同步日志子菜单
-    add_submenu_page(
-        'cnblogs-sync-settings',
-        __('同步日志', 'cnblogs-sync'),
-        __('同步日志', 'cnblogs-sync'),
-        'manage_options',
-        'cnblogs-sync-logs',
-        'cnblogs_sync_render_logs_page'
+        'cnblogs_sync_render_main_page'
     );
 }
 
@@ -130,6 +98,13 @@ function cnblogs_sync_sanitize_options($input) {
     $output['sync_delete'] = !empty($input['sync_delete']) ? 1 : 0;
     $output['sync_status'] = sanitize_text_field($input['sync_status'] ?? 'published');
     $output['publish_immediately'] = !empty($input['publish_immediately']) ? 1 : 0;
+    $output['source_link_mode'] = in_array(($input['source_link_mode'] ?? 'append'), array('append', 'struct'), true)
+        ? $input['source_link_mode']
+        : 'append';
+    $output['source_link_text'] = sanitize_text_field($input['source_link_text'] ?? '');
+    
+    // 卸载选项
+    $output['delete_data_on_uninstall'] = !empty($input['delete_data_on_uninstall']) ? 1 : 0;
     
     // 高级同步选项
     $output['sync_advanced_fields'] = !empty($input['sync_advanced_fields']) ? 1 : 0;
@@ -137,20 +112,55 @@ function cnblogs_sync_sanitize_options($input) {
     return $output;
 }
 
+/**
+ * 渲染主页面（带 Tabs）
+ */
+function cnblogs_sync_render_main_page() {
+    if (!current_user_can('manage_options')) {
+        wp_die(esc_html__('您没有权限访问此页面', 'cnblogs-sync'));
+    }
+
+    $active_tab = isset($_GET['tab']) ? $_GET['tab'] : 'settings';
+    ?>
+    <div class="wrap cnblogs-sync-wrap">
+        <h1><?php esc_html_e('CNBlogs 同步', 'cnblogs-sync'); ?></h1>
+        
+        <h2 class="nav-tab-wrapper">
+            <a href="?page=cnblogs-sync-settings&tab=settings" class="nav-tab <?php echo $active_tab == 'settings' ? 'nav-tab-active' : ''; ?>"><?php esc_html_e('设置', 'cnblogs-sync'); ?></a>
+            <a href="?page=cnblogs-sync-settings&tab=status" class="nav-tab <?php echo $active_tab == 'status' ? 'nav-tab-active' : ''; ?>"><?php esc_html_e('同步状态', 'cnblogs-sync'); ?></a>
+            <a href="?page=cnblogs-sync-settings&tab=logs" class="nav-tab <?php echo $active_tab == 'logs' ? 'nav-tab-active' : ''; ?>"><?php esc_html_e('同步日志', 'cnblogs-sync'); ?></a>
+            <a href="?page=cnblogs-sync-settings&tab=about" class="nav-tab <?php echo $active_tab == 'about' ? 'nav-tab-active' : ''; ?>"><?php esc_html_e('关于', 'cnblogs-sync'); ?></a>
+        </h2>
+        
+        <?php
+        switch ($active_tab) {
+            case 'status':
+                cnblogs_sync_render_status_content();
+                break;
+            case 'logs':
+                cnblogs_sync_render_logs_content();
+                break;
+            case 'about':
+                cnblogs_sync_render_about_content();
+                break;
+            case 'settings':
+            default:
+                cnblogs_sync_render_settings_content();
+                break;
+        }
+        ?>
+    </div>
+    <?php
+}
 
 /**
- * 渲染设置页面
+ * 渲染设置内容
  * 
  * 显示 CNBlogs 同步设置表单
  * 
  * @return void
  */
-function cnblogs_sync_render_settings_page() {
-    // 检查权限
-    if (!current_user_can('manage_options')) {
-        wp_die(esc_html__('您没有权限访问此页面', 'cnblogs-sync'));
-    }
-
+function cnblogs_sync_render_settings_content() {
     // 获取当前选项
     $options = get_option('cnblogs_sync_options', array());
     $defaults = array(
@@ -164,14 +174,15 @@ function cnblogs_sync_render_settings_page() {
         'sync_delete' => false,
         'sync_status' => 'published',
         'publish_immediately' => true,
-        'sync_advanced_fields' => true // 默认开启
+        'sync_advanced_fields' => true, // 默认开启
+        'source_link_mode' => 'append',
+        'source_link_text' => '',
+        'delete_data_on_uninstall' => false
     );
     $options = wp_parse_args($options, $defaults);
     ?>
 
-    <div class="wrap cnblogs-sync-wrap">
-        <h1><?php echo esc_html(get_admin_page_title()); ?></h1>
-
+    <div>
         <?php
         // 显示设置保存的通知
         if (isset($_GET['settings-updated'])) {
@@ -286,6 +297,26 @@ function cnblogs_sync_render_settings_page() {
                                 <?php esc_html_e('在同步的文章末尾添加原文链接', 'cnblogs-sync'); ?>
                             </label><br>
 
+                            <div style="margin-top: 10px;">
+                                <label for="cnblogs_source_link_mode">
+                                    <?php esc_html_e('原文链接写入方式', 'cnblogs-sync'); ?>
+                                </label>
+                                <select id="cnblogs_source_link_mode" name="cnblogs_sync_options[source_link_mode]" style="margin-left: 6px;">
+                                    <option value="append" <?php selected($options['source_link_mode'], 'append'); ?>><?php esc_html_e('追加到正文', 'cnblogs-sync'); ?></option>
+                                    <option value="struct" <?php selected($options['source_link_mode'], 'struct'); ?>><?php esc_html_e('写入 Source 字段（暂不生效）', 'cnblogs-sync'); ?></option>
+                                </select>
+                            </div>
+
+                            <div style="margin-top: 10px;">
+                                <label for="cnblogs_source_link_text">
+                                    <?php esc_html_e('原文链接自定义文案/来源名称', 'cnblogs-sync'); ?>
+                                </label>
+                                <input type="text" id="cnblogs_source_link_text" name="cnblogs_sync_options[source_link_text]" value="<?php echo esc_attr($options['source_link_text']); ?>" class="regular-text" style="margin-left: 6px;" placeholder="<?php esc_attr_e('例如：原文链接 或 我的博客', 'cnblogs-sync'); ?>">
+                                <p class="description">
+                                    <?php esc_html_e('留空则默认使用站点名称；追加到正文时会作为链接标题；写入 Source 字段时会作为 name。', 'cnblogs-sync'); ?>
+                                </p>
+                            </div>
+
                             <label style="margin-top: 10px; display: block;">
                                 <input type="checkbox" name="cnblogs_sync_options[publish_immediately]" value="1" <?php checked($options['publish_immediately']); ?>>
                                 <?php esc_html_e('立即发布（取消则为草稿）', 'cnblogs-sync'); ?>
@@ -304,6 +335,22 @@ function cnblogs_sync_render_settings_page() {
                             </p>
                         </td>
                     </tr>
+                    
+                    <!-- 卸载设置 -->
+                    <tr>
+                        <th scope="row">
+                            <?php esc_html_e('卸载选项', 'cnblogs-sync'); ?>
+                        </th>
+                        <td>
+                            <label>
+                                <input type="checkbox" name="cnblogs_sync_options[delete_data_on_uninstall]" value="1" <?php checked($options['delete_data_on_uninstall']); ?>>
+                                <?php esc_html_e('卸载插件时删除所有设置和数据', 'cnblogs-sync'); ?>
+                            </label>
+                            <p class="description">
+                                <?php esc_html_e('勾选此项将在插件卸载时清除所有配置和同步记录。如果您只是暂时停用或升级，建议保留。', 'cnblogs-sync'); ?>
+                            </p>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
 
@@ -315,19 +362,14 @@ function cnblogs_sync_render_settings_page() {
 }
 
 /**
- * 渲染同步状态页面
+ * 渲染同步状态内容
  * 
  * 显示所有文章的同步状态
  * 
  * @return void
  */
-function cnblogs_sync_render_status_page() {
+function cnblogs_sync_render_status_content() {
     global $wpdb;
-
-    // 检查权限
-    if (!current_user_can('manage_options')) {
-        wp_die(esc_html__('您没有权限访问此页面', 'cnblogs-sync'));
-    }
 
     $table_name = $wpdb->prefix . 'cnblogs_sync_records';
 
@@ -353,8 +395,7 @@ function cnblogs_sync_render_status_page() {
 
     ?>
 
-    <div class="wrap">
-        <h1><?php echo esc_html(get_admin_page_title()); ?></h1>
+    <div>
 
         <?php if ($total > 0): ?>
             <table class="wp-list-table widefat striped">
@@ -428,18 +469,13 @@ function cnblogs_sync_render_status_page() {
 }
 
 /**
- * 渲染同步日志页面
+ * 渲染同步日志内容
  * 
  * 显示同步操作的日志
  * 
  * @return void
  */
-function cnblogs_sync_render_logs_page() {
-    // 检查权限
-    if (!current_user_can('manage_options')) {
-        wp_die(esc_html__('您没有权限访问此页面', 'cnblogs-sync'));
-    }
-
+function cnblogs_sync_render_logs_content() {
     $log = get_option('cnblogs_sync_sync_log', array());
 
     // 反向排序日志（最新的在前）
@@ -447,8 +483,7 @@ function cnblogs_sync_render_logs_page() {
 
     ?>
 
-    <div class="wrap">
-        <h1><?php echo esc_html(get_admin_page_title()); ?></h1>
+    <div>
 
         <?php if (!empty($log)): ?>
             <table class="wp-list-table widefat striped">
@@ -498,5 +533,62 @@ function cnblogs_sync_render_logs_page() {
         <?php endif; ?>
     </div>
 
+    <?php
+}
+
+/**
+ * 渲染关于内容
+ * 
+ * 显示插件的相关信息
+ * 
+ * @return void
+ */
+function cnblogs_sync_render_about_content() {
+    
+    // 获取插件数据
+    // 注意：如果在某些上下文中 get_plugin_data 不可用，需要包含 plugin.php
+    if ( ! function_exists( 'get_plugin_data' ) ) {
+        require_once ABSPATH . 'wp-admin/includes/plugin.php';
+    }
+    $plugin_data = get_plugin_data( WP_PLUGIN_DIR . '/cnblogs-sync/cnblogs-sync.php' );
+    ?>
+    <div>
+        
+        <div class="card" style="max-width: 800px; margin-top: 20px;">
+            <h2 class="title"><?php esc_html_e('CNBlogs Sync', 'cnblogs-sync'); ?> v<?php echo esc_html($plugin_data['Version']); ?></h2>
+            <p><?php esc_html_e('通过 MetaWeblog 协议将 WordPress 文章自动同步到博客园（CNBlogs）。', 'cnblogs-sync'); ?></p>
+            
+            <h3><?php esc_html_e('项目地址', 'cnblogs-sync'); ?></h3>
+            <p>
+                <a href="https://github.com/MIKU-N/cnblogs-sync" target="_blank" class="button button-primary">
+                    <?php esc_html_e('访问 GitHub 仓库', 'cnblogs-sync'); ?>
+                </a>
+            </p>
+            <p class="description">
+                <?php esc_html_e('查看源代码、提交贡献或 Star 此项目。', 'cnblogs-sync'); ?>
+            </p>
+            
+            <h3><?php esc_html_e('问题反馈', 'cnblogs-sync'); ?></h3>
+            <p>
+                <a href="https://github.com/MIKU-N/cnblogs-sync/issues" target="_blank" class="button">
+                    <?php esc_html_e('提交 Issue', 'cnblogs-sync'); ?>
+                </a>
+            </p>
+            <p class="description">
+                <?php esc_html_e('如果您在使用过程中遇到任何问题或有功能建议，请在 GitHub Issues 中反馈。', 'cnblogs-sync'); ?>
+            </p>
+        </div>
+        
+        <div class="card" style="max-width: 800px; margin-top: 20px;">
+            <h3><?php esc_html_e('功能特性', 'cnblogs-sync'); ?></h3>
+            <ul style="list-style-type: disc; margin-left: 20px;">
+                <li><?php esc_html_e('支持发布和更新文章时自动同步', 'cnblogs-sync'); ?></li>
+                <li><?php esc_html_e('支持手动同步', 'cnblogs-sync'); ?></li>
+                <li><?php esc_html_e('自动处理分类（如不存在则创建）', 'cnblogs-sync'); ?></li>
+                <li><?php esc_html_e('支持自定义原文链接格式', 'cnblogs-sync'); ?></li>
+                <li><?php esc_html_e('支持 Markdown 格式同步', 'cnblogs-sync'); ?></li>
+            </ul>
+        </div>
+    </div>
     <?php
 }

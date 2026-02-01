@@ -393,6 +393,11 @@ class MetaWeblog_Client {
             $metaweblog_post['wp_slug'] = $post_data['wp_slug'];
         }
 
+        // 18. source (optional)
+        if (!empty($post_data['source']) && is_array($post_data['source'])) {
+            $metaweblog_post['source'] = $post_data['source'];
+        }
+
         // 日志记录请求参数详情
         error_log('CNBlogs Sync: newPost 参数详情 - ' . json_encode([
             'blog_id' => $this->blog_id,
@@ -462,6 +467,10 @@ class MetaWeblog_Client {
         
         if (!empty($post_data['wp_slug'])) {
             $metaweblog_post['wp_slug'] = $post_data['wp_slug'];
+        }
+
+        if (!empty($post_data['source']) && is_array($post_data['source'])) {
+            $metaweblog_post['source'] = $post_data['source'];
         }
 
         // 调试日志：记录即将发送的数据结构

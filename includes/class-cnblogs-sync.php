@@ -464,12 +464,22 @@ class CNBLOGS_Sync {
 
         // 添加原文链接（如果启用）
         if (!empty($this->options['add_source_link'])) {
-            $source_link = sprintf(
-                "\n\n---\n**原文链接：** [%s](%s)",
-                get_bloginfo('name'),
-                get_permalink($post)
-            );
-            $content .= $source_link;
+            $source_text = trim($this->options['source_link_text'] ?? '');
+            $source_name = $source_text !== '' ? $source_text : get_bloginfo('name');
+            $source_url = get_permalink($post);
+            $source_mode = $this->options['source_link_mode'] ?? 'append';
+
+            if ($source_mode !== 'struct') {
+                // 追加到正文
+                $label = $source_text !== '' ? $source_text : __('原文链接', 'cnblogs-sync');
+                $source_link = sprintf(
+                    "\n\n---\n**%s：** [%s](%s)",
+                    $label,
+                    $source_name,
+                    $source_url
+                );
+                $content .= $source_link;
+            }
         }
 
         $data = array(
@@ -477,6 +487,20 @@ class CNBLOGS_Sync {
             'description' => $content,
             'dateCreated' => strtotime($post->post_date),
         );
+
+        if (!empty($this->options['add_source_link'])) {
+            $source_text = trim($this->options['source_link_text'] ?? '');
+            $source_name = $source_text !== '' ? $source_text : get_bloginfo('name');
+            $source_url = get_permalink($post);
+            $source_mode = $this->options['source_link_mode'] ?? 'append';
+
+            if ($source_mode === 'struct') {
+                $data['source'] = array(
+                    'name' => $source_name,
+                    'url' => $source_url
+                );
+            }
+        }
 
         // 检查高级同步选项（分类、标签、摘要等）
         // 默认开启，如果在设置中关闭了此选项，则跳过这些字段

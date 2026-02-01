@@ -3,10 +3,11 @@
  * Plugin Name: CNBlogs Sync
  * Plugin URI: https://github.com/MIKU-N/cnblogs-sync
  * Description: 通过 MetaWeblog 协议将 WordPress 文章同步到 CNBlogs
- * Version: 1.1.1
+ * Version: 1.2.0
  * Author: MIKU-N
  * Author URI: https://yoursite.com
- * License: CC BY-NC-SA 4.0
+ * License: GPLv2 or later
+ * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: cnblogs-sync
  * Domain Path: /languages
  * Requires at least: 5.0
@@ -91,6 +92,8 @@ function cnblogs_sync_activate() {
             'cnblogs_password' => '',
             'sync_status' => 'published',
             'add_source_link' => true,
+            'source_link_mode' => 'append',
+            'source_link_text' => '',
             'auto_sync' => false
         ));
     }
@@ -146,54 +149,7 @@ function cnblogs_sync_deactivate() {
 }
 register_deactivation_hook(__FILE__, 'cnblogs_sync_deactivate');
 
-/**
- * 插件卸载时的处理
- * 
- * 删除所有选项和数据库表
- * 
- * @return void
- */
-function cnblogs_sync_uninstall() {
-    // 检查 nonce 和权限，避免误操作
-    if (!defined('ABSPATH')) {
-        return;
-    }
-
-    global $wpdb;
-
-    // 删除插件选项
-    delete_option('cnblogs_sync_options');
-    delete_option('cnblogs_sync_sync_log');
-
-    // 删除数据库表
-    $table_name = $wpdb->prefix . 'cnblogs_sync_records';
-    // 使用 prepare 进行安全的查询
-    if ($wpdb->query($wpdb->prepare("DROP TABLE IF EXISTS %i", $table_name))) {
-        // 表已删除
-    }
-
-    // 删除文章元数据
-    $args = array(
-        'posts_per_page' => -1,
-        'post_type' => 'post',
-        'meta_key' => '_cnblogs_synced',
-        'fields' => 'ids'
-    );
-    
-    $posts = get_posts($args);
-    if (is_array($posts)) {
-        foreach ($posts as $post_id) {
-            delete_post_meta($post_id, '_cnblogs_post_id');
-            delete_post_meta($post_id, '_cnblogs_synced');
-            delete_post_meta($post_id, '_cnblogs_sync_time');
-        }
-    }
-}
-
-// 确保卸载钩子被正确注册
-if (defined('WP_UNINSTALL_PLUGIN')) {
-    register_uninstall_hook(__FILE__, 'cnblogs_sync_uninstall');
-}
+// Uninstall logic moved to uninstall.php
 
 /**
  * 在插件列表页面添加设置链接
