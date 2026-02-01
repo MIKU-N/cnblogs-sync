@@ -73,7 +73,7 @@ class CNBLOGS_Sync {
             $this->metaweblog_client->set_timeout(120);
         } else {
             // 记录错误但不中断执行
-            error_log('CNBlogs Sync: MetaWeblog_Client 类未找到');
+            cnblogs_sync_log('CNBlogs Sync: MetaWeblog_Client class not found');
         }
 
         // 绑定钩子
@@ -171,10 +171,10 @@ class CNBLOGS_Sync {
             'ajax_url' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('cnblogs_sync_nonce'),
             'strings' => array(
-                'testing' => __('测试中...', 'cnblogs-sync'),
-                'success' => __('成功', 'cnblogs-sync'),
-                'error' => __('错误', 'cnblogs-sync'),
-                'syncing' => __('同步中...', 'cnblogs-sync'),
+                'testing' => __('Testing...', 'cnblogs-sync'),
+                'success' => __('Success', 'cnblogs-sync'),
+                'error' => __('Error', 'cnblogs-sync'),
+                'syncing' => __('Syncing...', 'cnblogs-sync'),
             )
         ));
     }
@@ -239,7 +239,7 @@ class CNBLOGS_Sync {
         // CNBlogs 的 newPost 接口要求 BlogID 为 URL 中的 Blog App 名 (如 'srs')，而不是数字 ID
         if ($current_blog_id === '1' || is_numeric($current_blog_id)) {
             try {
-                error_log('CNBlogs Sync: 检测到 Blog ID 为 "' . $current_blog_id . '"，尝试自动获取正确的 Blog App ID...');
+                cnblogs_sync_log('CNBlogs Sync: Detected Blog ID is "' . $current_blog_id . '", attempting to auto-fetch correct Blog App ID...');
                 $blogs = $this->metaweblog_client->get_users_blogs();
                 
                 if (!empty($blogs)) {
@@ -264,7 +264,7 @@ class CNBLOGS_Sync {
                     if (!empty($blog_url) && preg_match('/cnblogs\.com\/([^\/]+)\/?/i', $blog_url, $matches)) {
                         if (!empty($matches[1])) {
                              $parsed_id = $matches[1];
-                             error_log('CNBlogs Sync: 从 URL 目前解析出 Blog App ID: ' . $parsed_id);
+                             cnblogs_sync_log('CNBlogs Sync: Parsed Blog App ID from URL: ' . $parsed_id);
                              $new_blog_id = $parsed_id;
                         }
                     }
@@ -284,11 +284,11 @@ class CNBLOGS_Sync {
                         // 确保新实例也设置了足够的超时时间
                         $this->metaweblog_client->set_timeout(120);
                         
-                        error_log('CNBlogs Sync: 自动更新 Blog ID 成功: ' . $new_blog_id);
+                        cnblogs_sync_log('CNBlogs Sync: Automatically updated Blog ID successfully: ' . $new_blog_id);
                     }
                 }
             } catch (Exception $e) {
-                error_log('CNBlogs Sync: 自动获取 Blog ID 失败: ' . $e->getMessage());
+                cnblogs_sync_log('CNBlogs Sync: Failed to auto-fetch Blog ID: ' . $e->getMessage());
             }
         }
     }
@@ -346,18 +346,18 @@ class CNBLOGS_Sync {
                             if ($new_cat_id) {
                                 $valid_names[] = $cat_name;
                                 $filtered[] = $cat_name;
-                                error_log('CNBlogs Sync: 已创建远程分类 "' . $cat_name . '" (ID: ' . $new_cat_id . ')');
+                                cnblogs_sync_log('CNBlogs Sync: 已创建远程分类 "' . $cat_name . '" (ID: ' . $new_cat_id . ')');
                             } else {
-                                error_log('CNBlogs Sync: 创建远程分类失败 "' . $cat_name . '"');
+                                cnblogs_sync_log('CNBlogs Sync: Failed to create remote category "' . $cat_name . '"');
                             }
                         } catch (Exception $e) {
-                            error_log('CNBlogs Sync: 创建远程分类失败 "' . $cat_name . '": ' . $e->getMessage());
+                            cnblogs_sync_log('CNBlogs Sync: Failed to create remote category "' . $cat_name . '": ' . $e->getMessage());
                         }
                     }
 
                     $post_data['categories'] = $filtered;
                 } catch (Exception $e) {
-                    error_log('CNBlogs Sync: 获取远程分类失败，尝试创建分类后继续: ' . $e->getMessage());
+                    cnblogs_sync_log('CNBlogs Sync: Failed to fetch remote categories, attempting to create categories and continue: ' . $e->getMessage());
                     $filtered = array();
                     foreach ($post_data['categories'] as $cat_name) {
                         try {
@@ -368,12 +368,12 @@ class CNBLOGS_Sync {
 
                             if ($new_cat_id) {
                                 $filtered[] = $cat_name;
-                                error_log('CNBlogs Sync: 已创建远程分类 "' . $cat_name . '" (ID: ' . $new_cat_id . ')');
+                                cnblogs_sync_log('CNBlogs Sync: Remote category created "' . $cat_name . '" (ID: ' . $new_cat_id . ')');
                             } else {
-                                error_log('CNBlogs Sync: 创建远程分类失败 "' . $cat_name . '"');
+                                cnblogs_sync_log('CNBlogs Sync: Failed to create remote category "' . $cat_name . '"');
                             }
                         } catch (Exception $inner) {
-                            error_log('CNBlogs Sync: 创建远程分类失败 "' . $cat_name . '": ' . $inner->getMessage());
+                            cnblogs_sync_log('CNBlogs Sync: Failed to create remote category "' . $cat_name . '": ' . $inner->getMessage());
                         }
                     }
                     $post_data['categories'] = $filtered;
@@ -385,7 +385,7 @@ class CNBLOGS_Sync {
 
             if ($cnblogs_post_id) {
                 // 已同步 - 调用 editPost 更新文章
-                error_log('CNBlogs Sync: 文章已同步，执行更新操作 - postid: ' . $post_id . ', cnblogs_post_id: ' . $cnblogs_post_id);
+                cnblogs_sync_log('CNBlogs Sync: Post synced, performing update - postid: ' . $post_id . ', cnblogs_post_id: ' . $cnblogs_post_id);
                 
                 $result = $this->metaweblog_client->edit_post(
                     $cnblogs_post_id,
@@ -398,11 +398,11 @@ class CNBLOGS_Sync {
                     return true;
                 }
 
-                throw new Exception(__('编辑文章失败', 'cnblogs-sync'));
+                throw new Exception(__('Failed to edit post', 'cnblogs-sync'));
 
             } else {
                 // 未同步 - 调用 newPost 创建新文章
-                error_log('CNBlogs Sync: 文章未同步，执行创建操作 - postid: ' . $post_id);
+                cnblogs_sync_log('CNBlogs Sync: Post not synced, performing create - postid: ' . $post_id);
                 
                 $cnblogs_post_id = $this->metaweblog_client->new_post(
                     $post_data,
@@ -410,7 +410,7 @@ class CNBLOGS_Sync {
                 );
 
                 if (!$cnblogs_post_id) {
-                    throw new Exception(__('CNBlogs API 返回无效的 ID', 'cnblogs-sync'));
+                    throw new Exception(__('CNBlogs API returned invalid ID', 'cnblogs-sync'));
                 }
 
                 // 保存同步信息
@@ -471,7 +471,7 @@ class CNBLOGS_Sync {
 
             if ($source_mode !== 'struct') {
                 // 追加到正文
-                $label = $source_text !== '' ? $source_text : __('原文链接', 'cnblogs-sync');
+                $label = $source_text !== '' ? $source_text : __('Original Link', 'cnblogs-sync');
                 $source_link = sprintf(
                     "\n\n---\n**%s：** [%s](%s)",
                     $label,
@@ -550,6 +550,7 @@ class CNBLOGS_Sync {
         $table_name = $wpdb->prefix . 'cnblogs_sync_records';
 
         // 检查是否已存在记录
+        // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery
         $existing = $wpdb->get_row($wpdb->prepare(
             "SELECT id FROM $table_name WHERE post_id = %d",
             $post_id
@@ -557,6 +558,7 @@ class CNBLOGS_Sync {
 
         if ($existing) {
             // 更新现有记录
+            // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery
             $wpdb->update(
                 $table_name,
                 array(
@@ -571,6 +573,7 @@ class CNBLOGS_Sync {
             );
         } else {
             // 插入新记录
+            // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery
             $wpdb->insert(
                 $table_name,
                 array(
@@ -665,6 +668,7 @@ class CNBLOGS_Sync {
 
         // 获取同步记录
         $table_name = $wpdb->prefix . 'cnblogs_sync_records';
+        // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery
         $record = $wpdb->get_row($wpdb->prepare(
             "SELECT cnblogs_post_id FROM $table_name WHERE post_id = %d",
             $post_id
@@ -685,6 +689,7 @@ class CNBLOGS_Sync {
         }
 
         // 删除数据库记录
+        // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery
         $wpdb->delete(
             $table_name,
             array('post_id' => $post_id),
@@ -705,6 +710,7 @@ class CNBLOGS_Sync {
             'posts_per_page' => -1,
             'post_type' => 'post',
             'post_status' => 'publish',
+            // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
             'meta_query' => array(
                 array(
                     'key' => '_cnblogs_sync_pending',
@@ -738,29 +744,29 @@ class CNBLOGS_Sync {
         
         try {
             // 验证 nonce
-            if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'cnblogs_sync_nonce')) {
+            if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'cnblogs_sync_nonce')) {
                 ob_end_clean();
-                wp_send_json_error(__('安全验证失败', 'cnblogs-sync'));
+                wp_send_json_error(esc_html__('Security check failed', 'cnblogs-sync'));
             }
 
             // 检查权限
             if (!current_user_can('manage_options')) {
                 ob_end_clean();
-                wp_send_json_error(__('您没有权限执行此操作', 'cnblogs-sync'));
+                wp_send_json_error(__('You do not have permission to perform this action', 'cnblogs-sync'));
             }
 
-            $username = isset($_POST['username']) ? sanitize_text_field($_POST['username']) : '';
-            $password = isset($_POST['password']) ? sanitize_text_field($_POST['password']) : '';
+            $username = isset($_POST['username']) ? sanitize_text_field(wp_unslash($_POST['username'])) : '';
+            $password = isset($_POST['password']) ? sanitize_text_field(wp_unslash($_POST['password'])) : '';
 
             // 验证用户名和密码
             if (empty($username)) {
                 ob_end_clean();
-                wp_send_json_error(__('请输入 CNBlogs 用户名', 'cnblogs-sync'));
+                wp_send_json_error(esc_html__('Please enter CNBlogs username', 'cnblogs-sync'));
             }
 
             if (empty($password)) {
                 ob_end_clean();
-                wp_send_json_error(__('请输入 MetaWeblog 访问令牌（密码）', 'cnblogs-sync'));
+                wp_send_json_error(__('Please enter MetaWeblog access token', 'cnblogs-sync'));
             }
 
             // 使用用户配置的 API URL，如果没有配置则使用默认值
@@ -771,7 +777,7 @@ class CNBLOGS_Sync {
             // 验证 API URL
             if (!filter_var($api_url, FILTER_VALIDATE_URL)) {
                 ob_end_clean();
-                wp_send_json_error(__('API URL 格式不正确', 'cnblogs-sync'));
+                wp_send_json_error(__('Invalid API URL format', 'cnblogs-sync'));
             }
 
             $client = new MetaWeblog_Client(
@@ -781,9 +787,9 @@ class CNBLOGS_Sync {
             );
 
             // 尝试获取用户博客列表来验证凭证
-            error_log('CNBlogs Sync: 开始测试连接 - API URL: ' . $api_url . ', 用户名: ' . $username);
+            cnblogs_sync_log('CNBlogs Sync: Starting connection test - API URL: ' . $api_url . ', Username: ' . $username);
             $blogs = $client->get_users_blogs();
-            error_log('CNBlogs Sync: get_users_blogs 返回 - 类型: ' . gettype($blogs) . ', 元素数量: ' . (is_array($blogs) ? count($blogs) : 'N/A'));
+            // cnblogs_sync_log('CNBlogs Sync: get_users_blogs returned - Type: ' . gettype($blogs) . ', Count: ' . (is_array($blogs) ? count($blogs) : 'N/A'));
 
             // 清理缓冲区
             ob_end_clean();
@@ -796,7 +802,7 @@ class CNBLOGS_Sync {
             if (empty($blogs)) {
                 // 虽然博客列表为空，但没有异常说明连接成功
                 wp_send_json_success(array(
-                    'message' => __('连接成功！但获取到的博客列表为空。请确保你的 CNBlogs 账户有博客，或检查 MetaWeblog 访问令牌是否正确。', 'cnblogs-sync'),
+                    'message' => __('Connection successful! But the retrieved blog list is empty. Please ensure your CNBlogs account has a blog, or check if the MetaWeblog access token is correct.', 'cnblogs-sync'),
                     'warning' => true,
                     'user_info' => array()
                 ));
@@ -822,11 +828,12 @@ class CNBLOGS_Sync {
                     $current_options['cnblogs_blog_id'] = (string)$blog_id;
                     update_option('cnblogs_sync_options', $current_options);
                     
-                    error_log('CNBlogs Sync: 已保存 Blog ID: ' . $blog_id);
+                    cnblogs_sync_log('CNBlogs Sync: Blog ID saved: ' . $blog_id);
                 }
 
                 wp_send_json_success(array(
-                    'message' => __('连接成功！已获取并保存博客 ID (' . $blog_id . ')', 'cnblogs-sync'),
+                    /* translators: %s: Blog ID */
+                    'message' => sprintf(esc_html__('Connection successful! Blog ID (%s) retrieved and saved', 'cnblogs-sync'), esc_html($blog_id)),
                     'user_info' => is_array($blogs) ? $blogs : array()
                 ));
             }
@@ -843,7 +850,8 @@ class CNBLOGS_Sync {
             // 如果错误信息包含 HTTP 错误码，添加更多帮助信息
             if (strpos($error_message, 'HTTP') !== false) {
                 $error_message .= sprintf(
-                    __(' (请检查 API URL: %s 是否正确)', 'cnblogs-sync'),
+                    /* translators: %s: API URL */
+                    esc_html__(' (Please check if API URL is correct: %s)', 'cnblogs-sync'),
                     esc_html($api_url)
                 );
             }
@@ -865,22 +873,22 @@ class CNBLOGS_Sync {
         ob_start();
 
         // 验证 nonce
-        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'cnblogs_sync_nonce')) {
+        if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'cnblogs_sync_nonce')) {
             ob_end_clean(); // 清除缓冲区
-            wp_send_json_error(__('安全验证失败', 'cnblogs-sync'));
+            wp_send_json_error(esc_html__('Security check failed', 'cnblogs-sync'));
         }
 
         // 检查权限
         if (!current_user_can('edit_posts')) {
             ob_end_clean();
-            wp_send_json_error(__('您没有权限执行此操作', 'cnblogs-sync'));
+            wp_send_json_error(__('You do not have permission to perform this action', 'cnblogs-sync'));
         }
 
         $post_id = isset($_POST['post_id']) ? intval($_POST['post_id']) : 0;
 
         if (!$post_id) {
             ob_end_clean();
-            wp_send_json_error(__('无效的文章 ID', 'cnblogs-sync'));
+            wp_send_json_error(__('Invalid Post ID', 'cnblogs-sync'));
         }
 
         try {
@@ -893,13 +901,14 @@ class CNBLOGS_Sync {
                 // 获取最新的同步记录以返回给前端
                 global $wpdb;
                 $table_name = $wpdb->prefix . 'cnblogs_sync_records';
+                // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery
                 $record = $wpdb->get_row($wpdb->prepare(
-                    "SELECT * FROM $table_name WHERE post_id = %d",
+                    "SELECT * FROM $table_name WHERE post_id = %d", 
                     $post_id
                 ));
 
                 wp_send_json_success(array(
-                    'message' => __('文章同步成功！', 'cnblogs-sync'),
+                    'message' => __('Post synced successfully!', 'cnblogs-sync'),
                     'synced' => true,
                     'url' => $record ? $record->cnblogs_post_url : '',
                     'time' => $record ? $record->sync_time : current_time('mysql'),
@@ -907,12 +916,12 @@ class CNBLOGS_Sync {
                 ));
             } else {
                 $error = get_post_meta($post_id, '_cnblogs_sync_error', true);
-                wp_send_json_error($error ?: __('同步失败，请重试', 'cnblogs-sync'));
+                wp_send_json_error($error ?: __('Sync failed, please try again', 'cnblogs-sync'));
             }
         } catch (Exception $e) {
             ob_end_clean();
-            error_log('CNBlogs Sync Error: ' . $e->getMessage());
-            wp_send_json_error('同步异常: ' . $e->getMessage());
+            cnblogs_sync_log('CNBlogs Sync Error: ' . $e->getMessage());
+            wp_send_json_error('Sync Exception: ' . $e->getMessage());
         }
     }
 
@@ -923,19 +932,19 @@ class CNBLOGS_Sync {
      */
     public function ajax_get_sync_status() {
         // 验证 nonce
-        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'cnblogs_sync_nonce')) {
-            wp_send_json_error(__('安全验证失败', 'cnblogs-sync'));
+        if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'cnblogs_sync_nonce')) {
+            wp_send_json_error(esc_html__('Security check failed', 'cnblogs-sync'));
         }
 
         // 检查权限
         if (!current_user_can('read_posts')) {
-            wp_send_json_error(__('您没有权限执行此操作', 'cnblogs-sync'));
+            wp_send_json_error(__('You do not have permission to perform this action', 'cnblogs-sync'));
         }
 
         $post_id = isset($_POST['post_id']) ? intval($_POST['post_id']) : 0;
 
         if (!$post_id) {
-            wp_send_json_error(__('无效的文章 ID', 'cnblogs-sync'));
+            wp_send_json_error(__('Invalid Post ID', 'cnblogs-sync'));
         }
 
         $synced = get_post_meta($post_id, '_cnblogs_synced', true);
@@ -994,7 +1003,7 @@ class CNBLOGS_Sync {
         foreach ($columns as $key => $value) {
             $new_columns[$key] = $value;
             if ($key === 'title') {
-                $new_columns['cnblogs_sync_status'] = __('CNBlogs 同步状态', 'cnblogs-sync');
+                $new_columns['cnblogs_sync_status'] = __('CNBlogs Sync Status', 'cnblogs-sync');
             }
         }
         return $new_columns;
@@ -1016,6 +1025,7 @@ class CNBLOGS_Sync {
         $table_name = $wpdb->prefix . 'cnblogs_sync_records';
         
         // 从数据库查询同步记录
+        // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery
         $record = $wpdb->get_row(
             $wpdb->prepare(
                 "SELECT sync_status, cnblogs_post_url, sync_time FROM $table_name WHERE post_id = %d",
@@ -1024,15 +1034,15 @@ class CNBLOGS_Sync {
         );
 
         if (!$record) {
-            echo '<span style="color: #999;">未同步</span>';
+            echo '<span style="color: #999;">' . esc_html__('Not Synced', 'cnblogs-sync') . '</span>';
             return;
         }
 
         // 显示同步状态
         $status_labels = array(
-            'synced' => '✓ 已同步',
-            'failed' => '✗ 失败',
-            'pending' => '⏳ 待处理'
+            'synced' => __('✓ Synced', 'cnblogs-sync'),
+            'failed' => __('✗ Failed', 'cnblogs-sync'),
+            'pending' => __('⏳ Pending', 'cnblogs-sync')
         );
 
         $status_colors = array(
@@ -1085,7 +1095,7 @@ class CNBLOGS_Sync {
             '<a href="#" class="cnblogs-quick-sync" data-post-id="%d" data-nonce="%s">%s</a>',
             esc_attr($post->ID),
             esc_attr(wp_create_nonce('cnblogs_sync_nonce')),
-            __('同步到 CNBlogs', 'cnblogs-sync')
+            __('Sync to CNBlogs', 'cnblogs-sync')
         );
 
         return $actions;
@@ -1104,7 +1114,7 @@ class CNBLOGS_Sync {
 
         add_meta_box(
             'cnblogs_sync_meta_box',
-            __('CNBlogs 同步', 'cnblogs-sync'),
+            __('CNBlogs Sync', 'cnblogs-sync'),
             array($this, 'display_sync_meta_box'),
             'post',
             'side',
@@ -1123,6 +1133,7 @@ class CNBLOGS_Sync {
         $table_name = $wpdb->prefix . 'cnblogs_sync_records';
 
         // 查询同步记录
+        // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery
         $record = $wpdb->get_row(
             $wpdb->prepare(
                 "SELECT * FROM $table_name WHERE post_id = %d",
@@ -1135,28 +1146,28 @@ class CNBLOGS_Sync {
         
         if ($record) {
             $status_labels = array(
-                'synced' => __('已同步', 'cnblogs-sync'),
-                'failed' => __('同步失败', 'cnblogs-sync'),
-                'pending' => __('待处理', 'cnblogs-sync')
+                'synced' => __('Synced', 'cnblogs-sync'),
+                'failed' => __('Sync Failed', 'cnblogs-sync'),
+                'pending' => __('Pending', 'cnblogs-sync')
             );
 
             $status = $record->sync_status ?? 'unknown';
             $label = $status_labels[$status] ?? $status;
 
-            echo '<p><strong>' . __('同步状态：', 'cnblogs-sync') . '</strong>';
+            echo '<p><strong>' . esc_html__('Sync Status:', 'cnblogs-sync') . '</strong>';
             echo '<span style="color: ' . ($status === 'synced' ? '#008000' : ($status === 'failed' ? '#d63638' : '#ff6600')) . ';">';
             echo esc_html($label);
             echo '</span></p>';
 
             if ($record->sync_time) {
                 echo '<p><small>';
-                echo __('首次同步：', 'cnblogs-sync') . esc_html(mysql2date('Y-m-d H:i:s', $record->sync_time));
+                echo esc_html__('First Sync:', 'cnblogs-sync') . esc_html(mysql2date('Y-m-d H:i:s', $record->sync_time));
                 echo '</small></p>';
             }
 
             if ($record->last_sync_time && $record->last_sync_time !== $record->sync_time) {
                 echo '<p><small>';
-                echo __('最后更新：', 'cnblogs-sync') . esc_html(mysql2date('Y-m-d H:i:s', $record->last_sync_time));
+                echo esc_html__('Last Update:', 'cnblogs-sync') . esc_html(mysql2date('Y-m-d H:i:s', $record->last_sync_time));
                 echo '</small></p>';
             }
 
@@ -1165,18 +1176,18 @@ class CNBLOGS_Sync {
                 echo sprintf(
                     '<a href="%s" target="_blank">%s</a>',
                     esc_url($record->cnblogs_post_url),
-                    __('查看 CNBlogs 文章', 'cnblogs-sync')
+                    esc_html__('View CNBlogs Post', 'cnblogs-sync')
                 );
                 echo '</small></p>';
             }
 
             if ($record->sync_status === 'failed' && $record->error_message) {
                 echo '<p style="color: #d63638;"><small><strong>';
-                echo __('错误信息：', 'cnblogs-sync') . esc_html($record->error_message);
+                echo esc_html__('Error Message:', 'cnblogs-sync') . esc_html($record->error_message);
                 echo '</strong></small></p>';
             }
         } else {
-            echo '<p style="color: #999;">' . __('此文章尚未同步到 CNBlogs', 'cnblogs-sync') . '</p>';
+            echo '<p style="color: #999;">' . esc_html__('This post has not been synced to CNBlogs yet', 'cnblogs-sync') . '</p>';
         }
 
         echo '</div>';
@@ -1187,7 +1198,7 @@ class CNBLOGS_Sync {
             '<button type="button" class="button button-primary cnblogs-sync-btn" data-post-id="%d" data-nonce="%s">%s</button>',
             esc_attr($post->ID),
             esc_attr(wp_create_nonce('cnblogs_sync_nonce')),
-            __('立即同步', 'cnblogs-sync')
+            esc_html__('Sync Now', 'cnblogs-sync')
         );
         echo '</div>';
 
@@ -1227,7 +1238,7 @@ class CNBLOGS_Sync {
     function syncPostFromMetaBox(postId, nonce, button) {
         button.disabled = true;
         const originalText = button.textContent;
-        button.textContent = "' . esc_js(__('同步中...', 'cnblogs-sync')) . '";
+        button.textContent = "' . esc_js(__('Syncing...', 'cnblogs-sync')) . '";
 
         fetch("' . esc_url(admin_url('admin-ajax.php')) . '", {
             method: "POST",
@@ -1243,7 +1254,7 @@ class CNBLOGS_Sync {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                button.textContent = "' . esc_js(__('同步成功', 'cnblogs-sync')) . '";
+                button.textContent = "' . esc_js(__('Sync Success', 'cnblogs-sync')) . '";
                 button.disabled = false;
                 
                 // 动态更新 Meta Box 内容
@@ -1252,30 +1263,30 @@ class CNBLOGS_Sync {
                 
                 if (statusContainer && data.data && typeof data.data === "object") {
                     const info = data.data; 
-                    let html = "<p><strong>' . esc_js(__('同步状态：', 'cnblogs-sync')) . '</strong> ";
-                    html += "<span style=\"color: #008000;\">' . esc_js(__('已同步', 'cnblogs-sync')) . '</span></p>";
+                    let html = "<p><strong>' . esc_js(__('Sync Status:', 'cnblogs-sync')) . '</strong> ";
+                    html += "<span style=\"color: #008000;\">' . esc_js(__('Synced', 'cnblogs-sync')) . '</span></p>";
                     
                     if (info.time) {
-                        html += "<p><small>' . esc_js(__('首次同步：', 'cnblogs-sync')) . '" + info.time + "</small></p>";
+                        html += "<p><small>' . esc_js(__('First Sync:', 'cnblogs-sync')) . '" + info.time + "</small></p>";
                     }
                     if (info.last_time && info.last_time !== info.time) {
-                        html += "<p><small>' . esc_js(__('最后更新：', 'cnblogs-sync')) . '" + info.last_time + "</small></p>";
+                        html += "<p><small>' . esc_js(__('Last Update:', 'cnblogs-sync')) . '" + info.last_time + "</small></p>";
                     }
                     if (info.url) {
-                        html += "<p><small><a href=\"" + info.url + "\" target=\"_blank\">' . esc_js(__('查看 CNBlogs 文章', 'cnblogs-sync')) . '</a></small></p>";
+                        html += "<p><small><a href=\"" + info.url + "\" target=\"_blank\">' . esc_js(__('View CNBlogs Post', 'cnblogs-sync')) . '</a></small></p>";
                     }
                     statusContainer.innerHTML = html;
                 } else {
                     setTimeout(function() { location.reload(); }, 1500);
                 }
             } else {
-                alert("' . esc_js(__('同步失败：', 'cnblogs-sync')) . '" + (data.data || "未知错误"));
+                alert("' . esc_js(__('Sync Failed:', 'cnblogs-sync')) . '" + (data.data || "' . esc_js(__('Unknown Error', 'cnblogs-sync')) . '"));
                 button.disabled = false;
                 button.textContent = originalText;
             }
         })
         .catch(error => {
-            alert("' . esc_js(__('请求失败：', 'cnblogs-sync')) . '" + error);
+            alert("' . esc_js(__('Request Failed:', 'cnblogs-sync')) . '" + error);
             button.disabled = false;
             button.textContent = originalText;
         });

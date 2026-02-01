@@ -13,10 +13,10 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 global $wpdb;
 
 // 获取插件选项以检查用户是否请求删除数据
-$options = get_option( 'cnblogs_sync_options' );
+$cnblogs_sync_options = get_option( 'cnblogs_sync_options' );
 
 // 如果选项不存在或未勾选"卸载时删除数据"，则不执行清理操作
-if ( empty( $options ) || empty( $options['delete_data_on_uninstall'] ) ) {
+if ( empty( $cnblogs_sync_options ) || empty( $cnblogs_sync_options['delete_data_on_uninstall'] ) ) {
     return;
 }
 
@@ -25,10 +25,10 @@ delete_option( 'cnblogs_sync_options' );
 delete_option( 'cnblogs_sync_sync_log' );
 
 // 删除数据库表
-$table_name = $wpdb->prefix . 'cnblogs_sync_records';
+$cnblogs_sync_table_name = $wpdb->prefix . 'cnblogs_sync_records';
 // Direct query is safe here as we use prefix.
 // phpcs:ignore WordPress.DB.DirectDatabaseQuery
-$wpdb->query( "DROP TABLE IF EXISTS $table_name" );
+$wpdb->query( "DROP TABLE IF EXISTS $cnblogs_sync_table_name" );
 
 // 删除文章元数据 - 使用 SQL 直接删除比循环更高效
 // phpcs:ignore WordPress.DB.DirectDatabaseQuery

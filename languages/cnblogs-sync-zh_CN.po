@@ -1,0 +1,369 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: CNBlogs Sync 1.2.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-05-23 12:00+0800\n"
+"PO-Revision-Date: 2026-02-02 00:20+0800\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: zh_CN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 3.8\n"
+"X-Domain: cnblogs-sync\n"
+
+msgid "CNBlogs Sync"
+msgstr "CNBlogs 文章同步"
+
+msgid "Settings"
+msgstr "设置"
+
+msgid "Status"
+msgstr "状态"
+
+msgid "Logs"
+msgstr "日志"
+
+msgid "About"
+msgstr "关于"
+
+msgid "CNBlogs Account Settings"
+msgstr "博客园账号设置"
+
+msgid "CNBlogs Username"
+msgstr "博客园用户名"
+
+msgid "Enter your CNBlogs username"
+msgstr "请输入您的博客园用户名"
+
+msgid "Your login username for CNBlogs."
+msgstr "您用于登录博客园的用户名。"
+
+msgid "MetaWeblog Access Token"
+msgstr "MetaWeblog 访问令牌"
+
+msgid "Enter your MetaWeblog access token"
+msgstr "请输入您的 MetaWeblog 访问令牌"
+
+msgid "CNBlogs MetaWeblog API Access Token"
+msgstr "博客园后台设置中的 MetaWeblog 访问令牌"
+
+msgid "Test Connection"
+msgstr "测试连接"
+
+msgid "Automatic Sync"
+msgstr "自动同步"
+
+msgid "Automatically sync to CNBlogs when publishing posts"
+msgstr "发布文章时自动同步到博客园"
+
+msgid "Automatically sync to CNBlogs when updating posts"
+msgstr "更新文章时自动同步到博客园"
+
+msgid "Delete from CNBlogs when deleting posts in WordPress"
+msgstr "在 WordPress 删除文章时同步删除博客园文章"
+
+msgid "You can manually sync posts when automatic sync is disabled."
+msgstr "禁用自动同步时，您仍然可以手动同步文章。"
+
+msgid "Post Publishing Options"
+msgstr "文章发布选项"
+
+msgid "Add original link at the end of synced posts"
+msgstr "在同步的文章末尾添加原文链接"
+
+msgid "Source Link Mode"
+msgstr "原文链接写入方式"
+
+msgid "Append to content"
+msgstr "追加到正文"
+
+msgid "Write to Source field (Not currently supported)"
+msgstr "写入 Source 字段（暂不生效）"
+
+msgid "Custom Source Link Text/Site Name"
+msgstr "原文链接自定义文案/来源名称"
+
+msgid "leave empty to use site name"
+msgstr "留空则使用站点名称"
+
+msgid "e.g., Original Link or My Blog"
+msgstr "例如：原文链接 或 我的博客"
+
+msgid "Leave empty to use site name. Used as link title when appended to content, or as name when writing to Source field."
+msgstr "留空则默认使用站点名称；追加到正文时会作为链接标题；写入 Source 字段时会作为 name。"
+
+msgid "Publish Immediately (otherwise save as draft)"
+msgstr "立即发布（取消则为草稿）"
+
+msgid "Sync Tags, Categories, and Excerpts"
+msgstr "同步标签、分类与摘要"
+
+msgid "Try disabling this if you encounter errors during synchronization."
+msgstr "如果在同步过程中遇到错误，请尝试关闭此选项。"
+
+msgid "Original links help readers find the source of the article."
+msgstr "原文链接会帮助读者更好地了解文章的来源。"
+
+msgid "Uninstall Options"
+msgstr "卸载选项"
+
+msgid "Delete all settings and data when uninstalling"
+msgstr "卸载插件时删除所有设置和数据"
+
+msgid "Check this to clear all configuration and sync records when the plugin is uninstalled. Not recommended if you are just tentatively deactivating or upgrading."
+msgstr "勾选此项将在插件卸载时清除所有配置和同步记录。如果您只是暂时停用或升级，建议保留。"
+
+msgid "Post Title"
+msgstr "文章标题"
+
+msgid "Sync Status"
+msgstr "同步状态"
+
+msgid "CNBlogs ID"
+msgstr "CNBlogs ID"
+
+msgid "Sync Time"
+msgstr "同步时间"
+
+msgid "Actions"
+msgstr "操作"
+
+msgid "Edit"
+msgstr "编辑"
+
+msgid "No sync records found."
+msgstr "暂无同步记录。"
+
+msgid "Time"
+msgstr "时间"
+
+msgid "Action"
+msgstr "操作"
+
+msgid "Post ID"
+msgstr "文章 ID"
+
+msgid "Details"
+msgstr "详情"
+
+msgid "Total %d log entries"
+msgstr "总共 %d 条日志记录"
+
+msgid "No log records found."
+msgstr "暂无日志记录。"
+
+msgid "Automatically sync WordPress posts to CNBlogs via MetaWeblog protocol."
+msgstr "通过 MetaWeblog 协议将 WordPress 文章自动同步到博客园（CNBlogs）。"
+
+msgid "Project Homepage"
+msgstr "项目地址"
+
+msgid "Visit GitHub Repository"
+msgstr "访问 GitHub 仓库"
+
+msgid "View source code, contribute, or star this project."
+msgstr "查看源代码、提交贡献或 Star 此项目。"
+
+msgid "Feedback"
+msgstr "问题反馈"
+
+msgid "Submit Issue"
+msgstr "提交 Issue"
+
+msgid "If you encounter any issues or have feature suggestions, please report them on GitHub Issues."
+msgstr "如果您在使用过程中遇到任何问题或有功能建议，请在 GitHub Issues 中反馈。"
+
+msgid "Features"
+msgstr "功能特性"
+
+msgid "Automatically sync when publishing or updating posts"
+msgstr "支持发布和更新文章时自动同步"
+
+msgid "Support manual sync"
+msgstr "支持手动同步"
+
+msgid "Automatically handle categories (create if not exists)"
+msgstr "自动处理分类（如不存在则创建）"
+
+msgid "Support custom source link format"
+msgstr "支持自定义原文链接格式"
+
+msgid "Support Markdown format sync"
+msgstr "支持 Markdown 格式同步"
+
+msgid "Save Changes"
+msgstr "保存更改"
+
+msgid "Testing..."
+msgstr "测试中..."
+
+msgid "Success"
+msgstr "成功"
+
+msgid "Error"
+msgstr "错误"
+
+msgid "Syncing..."
+msgstr "同步中..."
+
+msgid "Sync Now"
+msgstr "立即同步"
+
+msgid "Synced"
+msgstr "已同步"
+
+msgid "Sync Failed"
+msgstr "同步失败"
+
+msgid "Pending"
+msgstr "待处理"
+
+msgid "View CNBlogs Post"
+msgstr "查看 CNBlogs 文章"
+
+msgid "Error Message:"
+msgstr "错误信息："
+
+msgid "Unknown error"
+msgstr "未知错误"
+
+msgid "Network request failed: %s"
+msgstr "网络请求失败: %s"
+
+msgid "API error: HTTP %d"
+msgstr "API 返回错误: HTTP %d"
+
+msgid "Unable to parse XML response"
+msgstr "无法解析 XML 响应"
+
+msgid "MetaWeblog error [%1$d]: %2$s"
+msgstr "MetaWeblog 错误 [%1$d]: %2$s"
+
+msgid "API response is empty, please check your username and password"
+msgstr "API 返回为空，请检查用户名和密码是否正确"
+
+msgid "Security check failed"
+msgstr "安全验证失败"
+
+msgid "You do not have permission to perform this action"
+msgstr "您没有权限执行此操作"
+
+msgid "Please enter CNBlogs username"
+msgstr "请输入 CNBlogs 用户名"
+
+msgid "Please enter MetaWeblog access token"
+msgstr "请输入 MetaWeblog 访问令牌（密码）"
+
+msgid "Invalid API URL format"
+msgstr "API URL 格式不正确"
+
+msgid "Connection successful! But the retrieved blog list is empty. Please ensure your CNBlogs account has a blog, or check if the MetaWeblog access token is correct."
+msgstr "连接成功！但获取到的博客列表为空。请确保你的 CNBlogs 账户有博客，或检查 MetaWeblog 访问令牌是否正确。"
+
+msgid "Connection successful! Blog ID (%s) retrieved and saved"
+msgstr "连接成功！已获取并保存博客 ID (%s)"
+
+msgid " (Please check if API URL is correct: %s)"
+msgstr " (请检查 API URL: %s 是否正确)"
+
+msgid "Invalid Post ID"
+msgstr "无效的文章 ID"
+
+msgid "Failed to edit post"
+msgstr "编辑文章失败"
+
+msgid "CNBlogs API returned invalid ID"
+msgstr "CNBlogs API 返回无效的 ID"
+
+msgid "CNBlogs Sync requires PHP 7.4 or higher"
+msgstr "CNBlogs Sync 需要 PHP 7.4 或更高版本"
+
+msgid "Plugin Activation Failed"
+msgstr "插件激活失败"
+
+msgid "CNBlogs Sync requires PHP cURL extension"
+msgstr "CNBlogs Sync插件需要PHP cURL扩展"
+
+msgid "CNBlogs Sync: Unable to load core class file"
+msgstr "CNBlogs Sync: 加载核心类文件失败"
+
+msgid "CNBlogs Sync: Unable to load MetaWeblog client"
+msgstr "CNBlogs Sync: 链接MetaWeblog API失败"
+
+msgid "CNBlogs Sync: Unable to load admin menu"
+msgstr "CNBlogs Sync: 加载管理面板失败"
+
+msgid "Sync Logs"
+msgstr "同步日志"
+
+msgid "Settings saved."
+msgstr "设置已保存。"
+
+msgid "Original Link"
+msgstr "原文链接"
+
+msgid "CNBlogs Sync Status"
+msgstr "CNBlogs 同步状态"
+
+msgid "Not Synced"
+msgstr "未同步"
+
+msgid "Sync to CNBlogs"
+msgstr "同步到博客园"
+
+msgid "Sync Success"
+msgstr "同步成功"
+
+msgid "Request Failed:"
+msgstr "请求失败："
+
+msgid "Unknown Error"
+msgstr "未知错误"
+
+msgid "Sync Failed:"
+msgstr "同步失败："
+
+msgid "You do not have permission to access this page."
+msgstr "您没有权限访问此页面。"
+
+msgid "Enable CNBlogs Sync"
+msgstr "启用博客园同步"
+
+msgid "Enable this option to activate CNBlogs synchronization."
+msgstr "启用此选项以开启博客园同步功能。"
+
+msgid "MetaWeblog API URL"
+msgstr "MetaWeblog API 地址"
+
+msgid "Unable to create post: API returned empty value"
+msgstr "无法创建文章：API 返回空值"
+
+msgid "Post synced successfully!"
+msgstr "文章同步成功！"
+
+msgid "Sync failed, please try again"
+msgstr "同步失败，请重试"
+
+msgid "Sync Status:"
+msgstr "同步状态："
+
+msgid "First Sync:"
+msgstr "首次同步："
+
+msgid "Last Update:"
+msgstr "最后更新："
+
+msgid "This post has not been synced to CNBlogs yet"
+msgstr "此文章尚未同步到博客园"
+
+msgid "✓ Synced"
+msgstr "✓ 已同步"
+
+msgid "✗ Failed"
+msgstr "✗ 失败"
+
+msgid "⏳ Pending"
+msgstr "⏳ 待处理"

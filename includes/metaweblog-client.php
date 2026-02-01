@@ -88,10 +88,10 @@ class MetaWeblog_Client {
         $request_body = $this->build_xml_rpc_request($method, $params);
         
         // 调试日志
-        error_log('CNBlogs Sync: 发送 XML-RPC 请求 - 方法: ' . $method . ', URL: ' . $this->api_url);
+        // cnblogs_sync_log('CNBlogs Sync: 发送 XML-RPC 请求 - 方法: ' . $method . ', URL: ' . $this->api_url);
         
         // 记录完整的 XML 请求体用于调试
-        error_log('CNBlogs Sync: XML-RPC 请求体: ' . $request_body);
+        // cnblogs_sync_log('CNBlogs Sync: XML-RPC 请求体: ' . $request_body);
 
         // 暂时添加过滤器以确保超时设置生效（防止被其他插件修改）
         add_filter('http_request_timeout', array($this, 'filter_http_request_timeout'));
@@ -120,25 +120,27 @@ class MetaWeblog_Client {
         // 检查是否有错误
         if (is_wp_error($response)) {
             throw new Exception(sprintf(
-                __('网络请求失败: %s', 'cnblogs-sync'),
-                $response->get_error_message()
+                /* translators: %s: Error message */
+                esc_html__('Network request failed: %s', 'cnblogs-sync'),
+                esc_html($response->get_error_message())
             ));
         }
 
         $body = wp_remote_retrieve_body($response);
         $http_code = wp_remote_retrieve_response_code($response);
         
-        error_log('CNBlogs Sync: API 响应 - HTTP 代码: ' . $http_code . ', 响应体长度: ' . strlen($body) . ' 字节');
+        // cnblogs_sync_log('CNBlogs Sync: API 响应 - HTTP 代码: ' . $http_code . ', 响应体长度: ' . strlen($body) . ' 字节');
         
         // 专门为 blogger.getUsersBlogs 或响应体较短的情况记录原始 XML
         if ($method === 'blogger.getUsersBlogs' || strlen($body) < 1000) {
-            error_log('CNBlogs Sync: 原始 API 响应体 (' . $method . '): ' . $body);
+            // cnblogs_sync_log('CNBlogs Sync: 原始 API 响应体 (' . $method . '): ' . $body);
         }
 
         if ($http_code !== 200) {
             throw new Exception(sprintf(
-                __('API 返回错误: HTTP %d', 'cnblogs-sync'),
-                $http_code
+                /* translators: %d: HTTP status code */
+                esc_html__('API error: HTTP %d', 'cnblogs-sync'),
+                intval($http_code)
             ));
         }
 
@@ -252,7 +254,7 @@ class MetaWeblog_Client {
         if ($xml === false) {
             $errors = libxml_get_errors();
             libxml_clear_errors();
-            throw new Exception(__('无法解析 XML 响应', 'cnblogs-sync'));
+            throw new Exception(esc_html__('Unable to parse XML response', 'cnblogs-sync'));
         }
 
         // 检查是否为错误响应
@@ -262,7 +264,7 @@ class MetaWeblog_Client {
             
             // 尝试从 struct 中提取错误信息
             $fault_code = 0;
-            $fault_string = '未知错误';
+            $fault_string = __('Unknown error', 'cnblogs-sync');
             
             if (isset($fault->struct->member)) {
                 foreach ($fault->struct->member as $member) {
@@ -276,9 +278,10 @@ class MetaWeblog_Client {
             }
             
             throw new Exception(sprintf(
-                __('MetaWeblog 错误 [%d]: %s', 'cnblogs-sync'),
-                $fault_code,
-                $fault_string
+                /* translators: 1: Fault code, 2: Fault string */
+                esc_html__('MetaWeblog error [%1$d]: %2$s', 'cnblogs-sync'),
+                intval($fault_code),
+                esc_html($fault_string)
             ));
         }
 
@@ -289,7 +292,7 @@ class MetaWeblog_Client {
             // 检查返回值是否为空或无效
             // 对于数组类型，即使为空也是有效的（如空的博客列表）
             if (!is_array($parsed) && empty($parsed) && !is_bool($parsed) && $parsed !== 0) {
-                throw new Exception(__('API 返回为空，请检查用户名和密码是否正确', 'cnblogs-sync'));
+                throw new Exception(esc_html__('API response is empty, please check your username and password', 'cnblogs-sync'));
             }
             
             return $parsed;
@@ -358,7 +361,7 @@ class MetaWeblog_Client {
      * @throws Exception 当 API 调用失败时
      */
     public function new_post($post_data, $publish = true) {
-        error_log('CNBlogs Sync: 开始创建新文章 - Blog ID: ' . $this->blog_id);
+        cnblogs_sync_log('CNBlogs Sync: Starting to create new post - Blog ID: ' . $this->blog_id);
         
         // 准备 MetaWeblog 格式的数据 - 严格遵循 struct Post 定义顺序
         // 1. dateCreated
@@ -399,7 +402,7 @@ class MetaWeblog_Client {
         }
 
         // 日志记录请求参数详情
-        error_log('CNBlogs Sync: newPost 参数详情 - ' . json_encode([
+        cnblogs_sync_log('CNBlogs Sync: newPost params details - ' . json_encode([
             'blog_id' => $this->blog_id,
             'username' => $this->username,
             'title' => $metaweblog_post['title'],
@@ -418,12 +421,12 @@ class MetaWeblog_Client {
                 (bool)$publish     // publish - 确保是布尔值
             ));
         } catch (Exception $e) {
-            error_log('CNBlogs Sync: newPost 异常 - ' . $e->getMessage());
+            cnblogs_sync_log('CNBlogs Sync: newPost exception - ' . $e->getMessage());
             throw $e;
         }
 
         if (!$post_id) {
-            throw new Exception(__('无法创建文章：API 返回空值', 'cnblogs-sync'));
+            throw new Exception(esc_html__('Unable to create post: API returned empty value', 'cnblogs-sync'));
         }
 
         return (string)$post_id;
@@ -442,7 +445,7 @@ class MetaWeblog_Client {
      */
     public function edit_post($post_id, $post_data) {
         // 调试日志：记录编辑操作开始
-        error_log('CNBlogs Sync: 开始编辑文章 - postid: ' . $post_id);
+        cnblogs_sync_log('CNBlogs Sync: Starting to edit post - postid: ' . $post_id);
         
         // 准备 MetaWeblog 格式的数据 - 严格遵循 struct Post 定义顺序
         $metaweblog_post = array(
@@ -474,14 +477,14 @@ class MetaWeblog_Client {
         }
 
         // 调试日志：记录即将发送的数据结构
-        error_log('CNBlogs Sync: editPost 数据结构 - 标题: ' . $metaweblog_post['title'] . 
-                  ', 内容长度: ' . strlen($metaweblog_post['description']) . 
-                  ', 分类: ' . json_encode($metaweblog_post['categories'] ?? []) .
-                  ', 标签: ' . ($metaweblog_post['mt_keywords'] ?? ''));
+        cnblogs_sync_log('CNBlogs Sync: editPost data structure - Title: ' . $metaweblog_post['title'] . 
+                  ', Content length: ' . strlen($metaweblog_post['description']) . 
+                  ', Categories: ' . json_encode($metaweblog_post['categories'] ?? []) .
+                  ', Tags: ' . ($metaweblog_post['mt_keywords'] ?? ''));
 
         // 调用 MetaWeblog API
         // 标准 MetaWeblog API 参数顺序: postid, username, password, struct, publish
-        error_log('CNBlogs Sync: 调用 metaWeblog.editPost - postid: ' . $post_id . 
+        cnblogs_sync_log('CNBlogs Sync: Calling metaWeblog.editPost - postid: ' . $post_id . 
                   ', username: ' . $this->username . ', publish: 1');
         
         // 生成请求体用于调试
@@ -493,7 +496,7 @@ class MetaWeblog_Client {
             1                      // publish
         );
         
-        error_log('CNBlogs Sync: editPost 完整参数 - ' . json_encode([
+        cnblogs_sync_log('CNBlogs Sync: editPost full params - ' . json_encode([
             'postid' => $post_id,
             'postid_type' => gettype($post_id),
             'username' => $this->username,
@@ -504,9 +507,9 @@ class MetaWeblog_Client {
         $result = $this->request('metaWeblog.editPost', $request_params);
 
         if ($result) {
-            error_log('CNBlogs Sync: editPost 成功，返回值: ' . var_export($result, true));
+            cnblogs_sync_log('CNBlogs Sync: editPost success, return value: ' . var_export($result, true));
         } else {
-            error_log('CNBlogs Sync: editPost 返回 false 或空值');
+            cnblogs_sync_log('CNBlogs Sync: editPost returned false or empty value');
         }
 
         return (bool)$result;
@@ -581,6 +584,7 @@ class MetaWeblog_Client {
      * @return string ISO 8601 格式的日期时间
      */
     private function timestamp_to_iso8601($timestamp) {
+        // phpcs:ignore WordPress.DateTime.RestrictedFunctions.date_date
         return date('Ymd\TH:i:s', $timestamp);
     }
 
@@ -609,7 +613,7 @@ class MetaWeblog_Client {
      * @throws Exception 当 API 调用失败时
      */
     public function get_users_blogs() {
-        error_log('CNBlogs Sync: 调用 blogger.getUsersBlogs 方法');
+        cnblogs_sync_log('CNBlogs Sync: 调用 blogger.getUsersBlogs 方法');
         
         $blogs = $this->request('blogger.getUsersBlogs', array(
             'cnblogs-sync-wp',    // appKey
@@ -617,33 +621,33 @@ class MetaWeblog_Client {
             $this->password      // password
         ));
 
-        error_log('CNBlogs Sync: blogger.getUsersBlogs 原始返回类型: ' . gettype($blogs));
+        cnblogs_sync_log('CNBlogs Sync: blogger.getUsersBlogs 原始返回类型: ' . gettype($blogs));
 
         // 验证返回结构
         if (!is_array($blogs)) {
             // 如果不是数组，尝试转换对象
             if (is_object($blogs)) {
-                error_log('CNBlogs Sync: 转换返回的对象为数组');
+                cnblogs_sync_log('CNBlogs Sync: 转换返回的对象为数组');
                 $blogs = (array)$blogs;
             } else {
-                error_log('CNBlogs Sync: 返回的不是数组或对象，类型: ' . gettype($blogs) . ', 值: ' . var_export($blogs, true));
+                cnblogs_sync_log('CNBlogs Sync: 返回的不是数组或对象，类型: ' . gettype($blogs) . ', 值: ' . var_export($blogs, true));
                 // 返回空数组，这可能表示没有博客
                 return array();
             }
         }
 
         // 验证数组中的每个元素是否有预期的 BlogInfo 结构
-        error_log('CNBlogs Sync: 博客列表包含 ' . count($blogs) . ' 个博客');
+        cnblogs_sync_log('CNBlogs Sync: 博客列表包含 ' . count($blogs) . ' 个博客');
         
         if (count($blogs) > 0) {
             // 验证第一个博客的结构
             $first_blog = reset($blogs);
-            error_log('CNBlogs Sync: 第一个博客的类型: ' . gettype($first_blog));
+            cnblogs_sync_log('CNBlogs Sync: 第一个博客的类型: ' . gettype($first_blog));
             if (is_array($first_blog)) {
-                error_log('CNBlogs Sync: 第一个博客的键: ' . implode(', ', array_keys($first_blog)));
-                error_log('CNBlogs Sync: 第一个博客的内容: ' . json_encode($first_blog));
+                cnblogs_sync_log('CNBlogs Sync: 第一个博客的键: ' . implode(', ', array_keys($first_blog)));
+                cnblogs_sync_log('CNBlogs Sync: 第一个博客的内容: ' . json_encode($first_blog));
             } else {
-                error_log('CNBlogs Sync: 第一个博客的内容: ' . var_export($first_blog, true));
+                cnblogs_sync_log('CNBlogs Sync: 第一个博客的内容: ' . var_export($first_blog, true));
             }
         }
 

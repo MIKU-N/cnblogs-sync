@@ -2,7 +2,7 @@
 /**
  * Plugin Name: CNBlogs Sync
  * Plugin URI: https://github.com/MIKU-N/cnblogs-sync
- * Description: 通过 MetaWeblog 协议将 WordPress 文章同步到 CNBlogs
+ * Description: Sync WordPress posts to CNBlogs via MetaWeblog API
  * Version: 1.2.0
  * Author: MIKU-N
  * Author URI: https://blog.im.ci
@@ -20,20 +20,37 @@ if (!defined('ABSPATH')) {
 }
 
 // 定义插件常量
-define('CNBLOGS_SYNC_VERSION', '1.1.1');
+define('CNBLOGS_SYNC_VERSION', '1.2.0');
 define('CNBLOGS_SYNC_DIR', plugin_dir_path(__FILE__));
 define('CNBLOGS_SYNC_URL', plugin_dir_url(__FILE__));
 define('CNBLOGS_SYNC_BASENAME', plugin_basename(__FILE__));
 
 // 加载插件依赖文件
 if (!require_once CNBLOGS_SYNC_DIR . 'includes/class-cnblogs-sync.php') {
-    wp_die('CNBlogs Sync: 无法加载核心类文件');
+    wp_die(esc_html__('CNBlogs Sync: Unable to load core class file', 'cnblogs-sync'));
 }
 if (!require_once CNBLOGS_SYNC_DIR . 'includes/metaweblog-client.php') {
-    wp_die('CNBlogs Sync: 无法加载 MetaWeblog 客户端');
+    wp_die(esc_html__('CNBlogs Sync: Unable to load MetaWeblog client', 'cnblogs-sync'));
 }
 if (!require_once CNBLOGS_SYNC_DIR . 'admin/admin-menu.php') {
-    wp_die('CNBlogs Sync: 无法加载管理菜单');
+    wp_die(esc_html__('CNBlogs Sync: Unable to load admin menu', 'cnblogs-sync'));
+}
+
+/**
+ * 自定义日志函数
+ * 
+ * 仅在 WP_DEBUG 开启时记录日志
+ * 
+ * @param mixed $message 日志内容
+ * @return void
+ */
+function cnblogs_sync_log($message) {
+    if (defined('WP_DEBUG') && WP_DEBUG) {
+        if (is_array($message) || is_object($message)) {
+            $message = print_r($message, true);
+        }
+        error_log($message);
+    }
 }
 
 /**
@@ -44,13 +61,6 @@ if (!require_once CNBLOGS_SYNC_DIR . 'admin/admin-menu.php') {
  * @return void
  */
 function cnblogs_sync_init() {
-    // 加载插件文本域（多语言支持）
-    load_plugin_textdomain(
-        'cnblogs-sync',
-        false,
-        dirname(CNBLOGS_SYNC_BASENAME) . '/languages/'
-    );
-
     // 创建插件主类实例
     CNBLOGS_Sync::get_instance();
 }
@@ -67,16 +77,16 @@ function cnblogs_sync_activate() {
     // 检查 PHP 版本
     if (version_compare(PHP_VERSION, '7.4', '<')) {
         wp_die(
-            esc_html__('CNBlogs Sync 需要 PHP 7.4 或更高版本', 'cnblogs-sync'),
-            esc_html__('插件激活失败', 'cnblogs-sync')
+            esc_html__('CNBlogs Sync requires PHP 7.4 or higher', 'cnblogs-sync'),
+            esc_html__('Plugin Activation Failed', 'cnblogs-sync')
         );
     }
 
     // 检查 cURL 扩展
     if (!extension_loaded('curl')) {
         wp_die(
-            esc_html__('CNBlogs Sync 需要启用 PHP cURL 扩展', 'cnblogs-sync'),
-            esc_html__('插件激活失败', 'cnblogs-sync')
+            esc_html__('CNBlogs Sync requires PHP cURL extension', 'cnblogs-sync'),
+            esc_html__('Plugin Activation Failed', 'cnblogs-sync')
         );
     }
 
@@ -166,7 +176,7 @@ function cnblogs_sync_add_plugin_action_links($links, $plugin_file) {
         $settings_link = sprintf(
             '<a href="%s">%s</a>',
             esc_url(admin_url('admin.php?page=cnblogs-sync-settings')),
-            esc_html__('设置', 'cnblogs-sync')
+            esc_html__('Settings', 'cnblogs-sync')
         );
         
         // 将设置链接插入到数组的开头

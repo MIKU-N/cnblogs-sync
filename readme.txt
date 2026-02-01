@@ -2,27 +2,27 @@
 Contributors: MIKU-N
 Tags: cnblogs, sync, metaweblog, blog, publish
 Requires at least: 5.0
-Tested up to: 6.7
+Tested up to: 6.9
 Stable tag: 1.2.0
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-将 WordPress 文章自动同步到博客园（CNBlogs）。
+Automatically sync your WordPress posts to CNBlogs (博客园).
 
 == Description ==
 
-CNBlogs Sync 是一个功能强大的 WordPress 插件，可以将您的文章自动同步到博客园（CNBlogs）。通过 MetaWeblog API 协议，实现无缝的文章发布和更新。
+CNBlogs Sync is a powerful WordPress plugin that automatically synchronizes your posts to CNBlogs. It achieves seamless article publishing and updating through the MetaWeblog API protocol.
 
-= 主要特性 =
+= Key Features =
 
-* 🔄 一键同步 - 从文章列表快速同步单篇文章
-* 📊 同步状态显示 - 文章列表中显示同步状态
-* 📝 编辑器集成 - 在文章编辑页面查看和管理同步
-* 🔐 安全认证 - 使用 MetaWeblog 协议进行文章同步
-* 📈 同步历史 - 记录每次同步的详细信息
-* 🛠️ 详细诊断 - 内置故障排查工具
-* 🚀 高效处理 - 异步同步，不影响网站性能
+* 🔄 One-click Sync - Quickly sync single posts from the article list
+* 📊 Sync Status - Display sync status in the article list
+* 📝 Editor Integration - View and manage sync in the post editor
+* 🔐 Secure Authentication - Sync articles using MetaWeblog protocol
+* 📈 Sync History - Log detailed information for each synchronization
+* 🛠️ Detailed Diagnostics - Built-in troubleshooting tools
+* 🚀 Efficient Processing - Asynchronous synchronization without affecting site performance
 * 🏷️ 灵活同步 - 支持选择是否同步分类、标签及摘要
 * 🔗 原文链接 - 支持自定义原文链接文案和写入方式
 * 📂 自动创建分类 - 远程不存在的分类自动创建
