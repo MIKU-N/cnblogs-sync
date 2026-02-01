@@ -3,7 +3,7 @@
  * Plugin Name: CNBlogs Sync
  * Plugin URI: https://github.com/MIKU-N/cnblogs-sync
  * Description: 通过 MetaWeblog 协议将 WordPress 文章同步到 CNBlogs
- * Version: 1.1.0
+ * Version: 1.1.1
  * Author: MIKU-N
  * Author URI: https://yoursite.com
  * License: CC BY-NC-SA 4.0
@@ -19,7 +19,7 @@ if (!defined('ABSPATH')) {
 }
 
 // 定义插件常量
-define('CNBLOGS_SYNC_VERSION', '1.1.0');
+define('CNBLOGS_SYNC_VERSION', '1.1.1');
 define('CNBLOGS_SYNC_DIR', plugin_dir_path(__FILE__));
 define('CNBLOGS_SYNC_URL', plugin_dir_url(__FILE__));
 define('CNBLOGS_SYNC_BASENAME', plugin_basename(__FILE__));

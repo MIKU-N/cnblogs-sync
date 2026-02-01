@@ -239,7 +239,7 @@ function cnblogs_sync_render_settings_page() {
                         <td>
                             <input type="password" id="cnblogs_sync_password" name="cnblogs_sync_options[cnblogs_password]" value="<?php echo esc_attr($options['cnblogs_password']); ?>" class="regular-text" placeholder="<?php esc_attr_e('输入您的 MetaWeblog 访问令牌', 'cnblogs-sync'); ?>">
                             <p class="description">
-                                <?php esc_html_e('您的 CNBlogs MetaWeblog API 访问令牌（通常与密码相同，存储在数据库中，请确保安全）', 'cnblogs-sync'); ?>
+                                <?php esc_html_e('CNBlogs MetaWeblog API 访问令牌', 'cnblogs-sync'); ?>
                             </p>
                             <button type="button" id="cnblogs_test_connection" class="button button-secondary" style="display: block; margin-top: 8px;">
                                 <?php esc_html_e('测试连接', 'cnblogs-sync'); ?>

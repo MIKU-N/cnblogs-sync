@@ -1,11 +1,11 @@
 # CNBlogs Sync - WordPress 插件
 
-![Version](https://img.shields.io/badge/version-1.1.0-blue)
+![Version](https://img.shields.io/badge/version-1.1.1-blue)
 ![License](https://img.shields.io/badge/license-CC_BY--NC--SA_4.0-green)
 ![WordPress](https://img.shields.io/badge/wordpress-5.0+-blue)
 ![PHP](https://img.shields.io/badge/php-7.4+-purple)
 
-一个强大的 WordPress 插件，可以将文章自动同步到 [CNBlogs（博客园）](https://www.cnblogs.com/)。
+一个 WordPress 插件，可以将文章自动同步到 [CNBlogs（博客园）](https://www.cnblogs.com/)。
 
 ## ⚠️ 许可协议
 
@@ -16,18 +16,16 @@
 - 🔄 **一键同步** - 从文章列表快速同步单篇文章
 - 📊 **同步状态显示** - 文章列表中显示同步状态
 - 📝 **编辑器集成** - 在文章编辑页面查看和管理同步
-- 🔐 **安全认证** - 使用 MetaWeblog 令牌，无需存储密码
+- 🔐 **安全认证** - 使用 MetaWeblog 协议进行文章同步
 - 📈 **同步历史** - 记录每次同步的详细信息
 - 🛠️ **详细诊断** - 内置故障排查工具
 - 🚀 **高效处理** - 异步同步，不影响网站性能
 - 🏷️ **灵活同步** - 支持选择是否同步分类、标签及摘要
 
-## 🆕 最新更新 (v1.1.0)
+## 🆕 最新更新 (v1.1.1)
 
-- **修复**：解决了古腾堡（Block Editor）编辑器下同步按钮UI不刷新的问题。
-- **新增**：在设置中增加“同步标签、分类与摘要”开关，默认开启。遇到API兼容性问题时可关闭此选项以提高成功率。
-- **优化**：文档结构重构，所有详细文档移动至 `docs/` 目录。
-- **协议**：许可协议变更为 CC BY-NC-SA 4.0。
+- **改进**：当 CNBlogs 远程不存在文章分类时，自动创建分类后再同步。
+- **优化**：简化后台表单中的 MetaWeblog 访问令牌描述文案。
 
 ## 🚀 快速开始
 

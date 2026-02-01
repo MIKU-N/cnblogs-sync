@@ -313,7 +313,7 @@ class CNBLOGS_Sync {
             // 准备文章数据
             $post_data = $this->prepare_post_data($post);
 
-            // 验证分类是否存在，不存在则移除，防止 CNBlogs 报错 (500 Object reference)
+            // 验证分类是否存在，不存在则创建后再同步，防止 CNBlogs 报错 (500 Object reference)
             if (!empty($post_data['categories'])) {
                 try {
                     $server_categories = $this->metaweblog_client->get_categories();
@@ -330,20 +330,53 @@ class CNBLOGS_Sync {
                         }
                     }
 
-                    // 过滤出存在的分类
                     $filtered = array();
                     foreach ($post_data['categories'] as $cat_name) {
-                        if (in_array($cat_name, $valid_names)) {
+                        if (in_array($cat_name, $valid_names, true)) {
                             $filtered[] = $cat_name;
-                        } else {
-                            error_log('CNBlogs Sync: 忽略不存在的分类 "' . $cat_name . '"');
+                            continue;
+                        }
+
+                        try {
+                            $new_cat_id = $this->metaweblog_client->new_category(array(
+                                'name' => $cat_name,
+                                'parent_id' => 0
+                            ));
+
+                            if ($new_cat_id) {
+                                $valid_names[] = $cat_name;
+                                $filtered[] = $cat_name;
+                                error_log('CNBlogs Sync: 已创建远程分类 "' . $cat_name . '" (ID: ' . $new_cat_id . ')');
+                            } else {
+                                error_log('CNBlogs Sync: 创建远程分类失败 "' . $cat_name . '"');
+                            }
+                        } catch (Exception $e) {
+                            error_log('CNBlogs Sync: 创建远程分类失败 "' . $cat_name . '": ' . $e->getMessage());
+                        }
+                    }
+
+                    $post_data['categories'] = $filtered;
+                } catch (Exception $e) {
+                    error_log('CNBlogs Sync: 获取远程分类失败，尝试创建分类后继续: ' . $e->getMessage());
+                    $filtered = array();
+                    foreach ($post_data['categories'] as $cat_name) {
+                        try {
+                            $new_cat_id = $this->metaweblog_client->new_category(array(
+                                'name' => $cat_name,
+                                'parent_id' => 0
+                            ));
+
+                            if ($new_cat_id) {
+                                $filtered[] = $cat_name;
+                                error_log('CNBlogs Sync: 已创建远程分类 "' . $cat_name . '" (ID: ' . $new_cat_id . ')');
+                            } else {
+                                error_log('CNBlogs Sync: 创建远程分类失败 "' . $cat_name . '"');
+                            }
+                        } catch (Exception $inner) {
+                            error_log('CNBlogs Sync: 创建远程分类失败 "' . $cat_name . '": ' . $inner->getMessage());
                         }
                     }
                     $post_data['categories'] = $filtered;
-                    
-                } catch (Exception $e) {
-                    error_log('CNBlogs Sync: 获取远程分类失败，将清空分类以确保发布: ' . $e->getMessage());
-                    $post_data['categories'] = array();
                 }
             }
 
