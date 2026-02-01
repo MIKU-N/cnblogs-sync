@@ -5,7 +5,7 @@
  * Description: 通过 MetaWeblog 协议将 WordPress 文章同步到 CNBlogs
  * Version: 1.2.0
  * Author: MIKU-N
- * Author URI: https://yoursite.com
+ * Author URI: https://blog.im.ci
  * License: GPLv2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: cnblogs-sync
