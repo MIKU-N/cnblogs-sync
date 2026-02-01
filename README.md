@@ -1,6 +1,6 @@
 # CNBlogs Sync - WordPress 插件
 
-![Version](https://img.shields.io/badge/version-1.2.2-blue)
+![Version](https://img.shields.io/badge/version-1.2.3-blue)
 ![License](https://img.shields.io/badge/license-GPLv2-green)
 ![WordPress](https://img.shields.io/badge/wordpress-5.0+-blue)
 ![PHP](https://img.shields.io/badge/php-7.4+-purple)
@@ -22,10 +22,12 @@
 - 🚀 **高效处理** - 异步同步，不影响网站性能
 - 🏷️ **灵活同步** - 支持选择是否同步分类、标签及摘要
 
-## 🆕 最新更新 (v1.1.1)
+## 🆕 最新更新 (v1.2.3)
 
-- **改进**：当 CNBlogs 远程不存在文章分类时，自动创建分类后再同步。
-- **优化**：简化后台表单中的 MetaWeblog 访问令牌描述文案。
+- **构建修复**：确保翻译文件即包含在发布包中。
+- **日志优化**：重构日志记录机制，仅在 `WP_DEBUG` 开启时生效。
+- **本地化完善**：全面补全中文翻译，包括 JS 动态文本和后台选项。
+- **安全性增强**：增加日志数据的类型检查。
 
 ## 🚀 快速开始
 

@@ -3,7 +3,7 @@ Contributors: MIKU-N
 Tags: cnblogs, sync, metaweblog, blog, publish
 Requires at least: 5.0
 Tested up to: 6.9
-Stable tag: 1.2.2
+Stable tag: 1.2.3
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -103,6 +103,9 @@ CNBlogs Sync is a powerful WordPress plugin that automatically synchronizes your
 4. 同步状态页面 - 查看所有文章的同步历史
 
 == Changelog ==
+
+= 1.2.3 (2026-02-02) =
+* 修复：修复发布流程遗漏翻译文件的问题
 
 = 1.2.2 (2026-02-02) =
 * 优化：自定义日志函数，仅在开启调试模式时记录日志

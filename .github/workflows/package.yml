@@ -22,6 +22,8 @@ jobs:
           
           # 复制主要插件文件和目录
           cp cnblogs-sync.php build/cnblogs-sync/
+          cp uninstall.php build/cnblogs-sync/
+          cp readme.txt build/cnblogs-sync/
           cp LICENSE build/cnblogs-sync/
           cp README.md build/cnblogs-sync/
           
@@ -29,6 +31,7 @@ jobs:
           cp -r admin build/cnblogs-sync/
           cp -r assets build/cnblogs-sync/
           cp -r includes build/cnblogs-sync/
+          cp -r languages build/cnblogs-sync/
           
           # 验证文件结构
           ls -R build/cnblogs-sync
