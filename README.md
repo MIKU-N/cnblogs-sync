@@ -1,7 +1,7 @@
 # CNBlogs Sync - WordPress 插件
 
-![Version](https://img.shields.io/badge/version-1.1.1-blue)
-![License](https://img.shields.io/badge/license-CC_BY--NC--SA_4.0-green)
+![Version](https://img.shields.io/badge/version-1.2.0-blue)
+![License](https://img.shields.io/badge/license-GPLv2-green)
 ![WordPress](https://img.shields.io/badge/wordpress-5.0+-blue)
 ![PHP](https://img.shields.io/badge/php-7.4+-purple)
 
@@ -9,7 +9,7 @@
 
 ## ⚠️ 许可协议
 
-本项目采用 **[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/)** 协议，**允许非商业使用**，禁止商用。
+本项目采用 **[GPLv2](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html)** 协议。
 
 ## ✨ 特性
 

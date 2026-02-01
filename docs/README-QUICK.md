@@ -28,7 +28,7 @@
 
 ## 📝 许可证
 
-**CC BY-NC-SA 4.0** - 详见 [LICENSE](../LICENSE) 文件
+**GPLv2** - 详见 [LICENSE](../LICENSE) 文件
 
 ---
 
