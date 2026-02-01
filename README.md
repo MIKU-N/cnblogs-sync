@@ -1,6 +1,6 @@
 # CNBlogs Sync - WordPress 插件
 
-![Version](https://img.shields.io/badge/version-1.2.0-blue)
+![Version](https://img.shields.io/badge/version-1.2.2-blue)
 ![License](https://img.shields.io/badge/license-GPLv2-green)
 ![WordPress](https://img.shields.io/badge/wordpress-5.0+-blue)
 ![PHP](https://img.shields.io/badge/php-7.4+-purple)
